@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ug.co.intelworld.exceptions;
+package ip2.exceptions;
 
 /**
  *

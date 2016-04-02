@@ -4,23 +4,15 @@
  * and open the template in the editor.
  */
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Assert;
 
 import org.junit.Test;
-import ug.co.intelworld.constants.Environment;
-import ug.co.intelworld.services.IP2Gateway;
-import ug.co.intelworld.exceptions.IP2GatewayException;
-import ug.co.intelworld.helpers.IP2GatewayUtils;
-import ug.co.intelworld.services.AccountDetails;
-import ug.co.intelworld.services.CommerceRequest;
-import ug.co.intelworld.services.IP2Response;
-import ug.co.intelworld.services.PaymentRequest;
-import ug.co.intelworld.services.Transactions;
+import ip2.constants.Environment;
+import ip2.services.IP2Gateway;
+import ip2.exceptions.IP2GatewayException;
+import ip2.services.AccountDetails;
 
 /**
  *
@@ -31,10 +23,6 @@ public class AccountDetailsTests {
     public AccountDetailsTests() {
     }
     
- 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
      @Test
      public void testThatCanGetAccountBalance() {
          

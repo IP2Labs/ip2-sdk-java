@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ug.co.intelworld.services;
+package ip2.services;
 
 //import org.apache.commons.lang3.StringUtils;
 
-import ug.co.intelworld.constants.Environment;
-import ug.co.intelworld.exceptions.IP2GatewayException;
+import ip2.constants.Environment;
+import ip2.exceptions.IP2GatewayException;
 
 
 /**
  *
  * @author herbert
  */
-public class IP2Gateway extends ProviderImpl implements ug.co.intelworld.contracts.IP2Gateway {
+public class IP2Gateway extends ProviderImpl implements ip2.contracts.IP2Gateway {
 
     public IP2Gateway(Environment environment, String subscriptionId, String accountId, String username, String password) {
         super(environment, subscriptionId, accountId, username, password);

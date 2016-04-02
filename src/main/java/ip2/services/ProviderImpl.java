@@ -3,25 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ug.co.intelworld.services;
+package ip2.services;
 
 import intelworld.hmacauth.exception.EmptyOrNullException;
 import intelworld.hmacauth.impl.Constants;
 import intelworld.hmacauth.impl.HmacAuthHeadersImpl;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ug.co.intelworld.constants.Environment;
-import ug.co.intelworld.exceptions.IP2GatewayException;
+import ip2.constants.Environment;
+import ip2.exceptions.IP2GatewayException;
 
 /**
  *

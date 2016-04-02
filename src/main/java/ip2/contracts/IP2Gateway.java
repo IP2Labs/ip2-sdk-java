@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ug.co.intelworld.contracts;
+package ip2.contracts;
 
 
-import ug.co.intelworld.exceptions.IP2GatewayException;
-import ug.co.intelworld.services.AccountDetails;
-import ug.co.intelworld.services.PaymentRequest;
-import ug.co.intelworld.services.CommerceRequest;
-import ug.co.intelworld.services.IP2Response;
-import ug.co.intelworld.services.Transactions;
+import ip2.exceptions.IP2GatewayException;
+import ip2.services.AccountDetails;
+import ip2.services.PaymentRequest;
+import ip2.services.CommerceRequest;
+import ip2.services.IP2Response;
+import ip2.services.Transactions;
 
 /**
  *

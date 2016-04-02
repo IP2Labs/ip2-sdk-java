@@ -12,11 +12,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import ug.co.intelworld.constants.Environment;
-import ug.co.intelworld.exceptions.IP2GatewayException;
-import ug.co.intelworld.services.IP2Gateway;
-import ug.co.intelworld.services.Transactions;
+import ip2.constants.Environment;
+import ip2.exceptions.IP2GatewayException;
+import ip2.services.IP2Gateway;
+import ip2.services.Transactions;
 
 /**
  *
@@ -65,9 +64,4 @@ public class TransactionsTest {
         }
      }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
 }

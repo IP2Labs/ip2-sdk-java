@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ug.co.intelworld.services;
+package ip2.services;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,18 +15,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.Map;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import ug.co.intelworld.exceptions.IP2GatewayException;
+import ip2.exceptions.IP2GatewayException;
 
 /**
  *
@@ -48,6 +40,7 @@ public class NetworkHelpers {
      * in the event that the user does wants to specify their own timeouts for
      * the HTTP request
      *
+     * @param http_method Request method to be used in the request
      * @param url_ The endpoint URL to be called
      * @param headers Name value pairs of header values to be added to the
      * request
@@ -60,7 +53,7 @@ public class NetworkHelpers {
      * @throws MalformedURLException When the URL is not as expected by the
      * underlying HTTP service, this exception will be thrown
      * @throws IOException Any input or output errors will raise IOException
-     * @throws ug.co.intelworld.exceptions.IP2GatewayException when it fails to
+     * @throws ip2.exceptions.IP2GatewayException when it fails to
      * bypass SSL verification for tests
      */
     protected static String productionHttpRequest(

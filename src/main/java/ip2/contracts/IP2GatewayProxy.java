@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ug.co.intelworld.constants;
+package ip2.contracts;
 
 /**
  *
  * @author herbert
  */
-public enum Environment {
-     SANDBOX,PRODUCTION    
+public interface IP2GatewayProxy {
+ 
+    
 }
