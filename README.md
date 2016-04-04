@@ -12,6 +12,6 @@ To be added - How to install from Maven
 
 Functionality    
 1. [Collect and Make payments](https://github.com/IP2Labs/ip2-sdk-java/wiki/Payments)  
-2. [Sell first moving digital goods like airtime , data , tickets , shopping vouchers and lots more](https://github.com/IP2Labs/ip2-sdk-net/wiki/Commerce)    
-3. [View my account details](https://github.com/IP2Labs/ip2-sdk-net/wiki/Accounts)   
+2. [Sell first moving digital goods like airtime , data , tickets , shopping vouchers and lots more](https://github.com/IP2Labs/ip2-sdk-java/wiki/Commerce)    
+3. [View my account details](https://github.com/IP2Labs/ip2-sdk-java/wiki/Accounts)   
 
