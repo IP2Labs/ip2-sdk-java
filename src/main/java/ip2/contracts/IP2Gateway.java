@@ -11,6 +11,8 @@ import ip2.services.AccountDetails;
 import ip2.services.PaymentRequest;
 import ip2.services.CommerceRequest;
 import ip2.services.IP2Response;
+import ip2.services.ProductItems;
+import ip2.services.Products;
 import ip2.services.Transactions;
 
 /**
@@ -26,5 +28,6 @@ public interface IP2Gateway {
     public IP2Response purchase(CommerceRequest request) throws IP2GatewayException;
     public AccountDetails getAccountDetails() throws IP2GatewayException;
     public Transactions[] getTransactions() throws IP2GatewayException;
-   
+    public ProductItems[] getProductItems(String productId) throws IP2GatewayException;
+    public Products[] getProducts() throws IP2GatewayException;
 }

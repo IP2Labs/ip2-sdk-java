@@ -342,5 +342,75 @@ abstract class ProviderImpl {
         }
 
     }
+    
+    
+    
+    public ProductItems[] getProductItems(String productId) throws IP2GatewayException
+    {
+    	String resourceUri = "/api/services?productId=".concat(productId);
+    	
+    	String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
+    	
+    	JSONObject object = new JSONObject(getResponse);
+    	
+    	ProductItems[] productItemsResponse = new ProductItems[object.length()];
+    	
+    	for(int i=0; i<object.length(); i++)
+    	{
+    		ProductItems productItems  = new ProductItems();
+    		productItems.setProductId(object.getString("ProductId"));
+    		productItems.setCategory1(object.getString("Category1"));
+    		productItems.setCategory2(object.getString("Category2"));
+    		productItems.setCategory3(object.getString("Category3"));
+    		productItems.setCategory4(object.getString("Category4"));
+    		productItems.setName(object.getString("Name"));
+    		productItems.setDescription(object.getString("Description"));
+    		productItems.setMinimumPrice(object.getBigDecimal("MininumPrice"));
+    		productItems.setMaximumPrice(object.getBigDecimal("MaximumPrice"));
+    		productItems.setWholeSalePrice(object.getBigDecimal("WholeSalePrice"));
+    		productItems.setCurrencyCode(object.getString("CurrencyCode"));
+    		productItems.setProductFee(object.getBigDecimal("ProductFee"));
+    		productItems.setDiscount(object.getBigDecimal("Discount"));
+    		productItems.setTax(object.getBigDecimal("Tax"));
+    		
+    		productItemsResponse[i] = productItems;
+    	}
+    	
+    	
+    	
+    	return productItemsResponse;
+    }
+    
+    
+    public Products[] getProducts() throws IP2GatewayException
+    {
+    	String resourceUri = "/api/services";
+    	
+        String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
+    	
+    	JSONObject object = new JSONObject(getResponse);
+    	
+    	Products[] productResponse = new Products[object.length()];
+    	
+    	for(int i=0; i<object.length(); i++)
+    	{
+    		Products products = new Products();
+    		products.setProductId(object.getString("ServiceId"));
+    		products.setName(object.getString("Name"));
+    		products.setDescription(object.getString("Description"));
+    		products.setWebsite(object.getString("Website"));
+    		products.setContactEmail(object.getString("ContactEmail"));
+    		products.setServiceUri(object.getString("ServiceUri"));
+    		products.setCurrencyCode(object.getString("CurrencyCode"));
+    		products.setCountryCode(object.getString("CountryCode"));
+    		products.setThumbNail(object.getString("ThumbNail"));
+    		products.setLargeImage(object.getString("LargeImage"));
+    		
+    		productResponse[i] = products;
+    	}
+    	
+    	return productResponse;
+    }
+    
 
 }
