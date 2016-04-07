@@ -45,4 +45,17 @@ public class IP2Gateway extends ProviderImpl implements ip2.contracts.IP2Gateway
     public Transactions[] getTransactions() throws IP2GatewayException {
        return super.getTransactions();
     }
+
+	@Override
+	public ProductItems[] getProductItems(String productId)
+			throws IP2GatewayException {
+		// TODO Auto-generated method stub
+		return super.getProductItems(productId);
+	}
+
+	@Override
+	public Products[] getProducts() throws IP2GatewayException {
+		// TODO Auto-generated method stub
+		return super.getProducts();
+	}
 }

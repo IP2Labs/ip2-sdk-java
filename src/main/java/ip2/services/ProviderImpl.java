@@ -351,6 +351,8 @@ abstract class ProviderImpl {
     	
     	String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
     	
+    	
+    	
     	JSONObject object = new JSONObject(getResponse);
     	
     	ProductItems[] productItemsResponse = new ProductItems[object.length()];
@@ -387,24 +389,32 @@ abstract class ProviderImpl {
     	String resourceUri = "/api/services";
     	
         String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
+        
+        System.out.println(getResponse);
     	
-    	JSONObject object = new JSONObject(getResponse);
+    	JSONArray array = new JSONArray(getResponse);
     	
-    	Products[] productResponse = new Products[object.length()];
+    	Products[] productResponse = new Products[array.length()];
     	
-    	for(int i=0; i<object.length(); i++)
+    	for(int i=0; i<array.length(); i++)
     	{
+    		JSONObject object = array.getJSONObject(i);
     		Products products = new Products();
     		products.setProductId(object.getString("ServiceId"));
     		products.setName(object.getString("Name"));
+    		products.setUsername(object.getString("Username"));
     		products.setDescription(object.getString("Description"));
     		products.setWebsite(object.getString("Website"));
+    		products.setContactPhone(object.getString("ContactPhone"));
+    		
     		products.setContactEmail(object.getString("ContactEmail"));
     		products.setServiceUri(object.getString("ServiceUri"));
     		products.setCurrencyCode(object.getString("CurrencyCode"));
     		products.setCountryCode(object.getString("CountryCode"));
     		products.setThumbNail(object.getString("ThumbNail"));
     		products.setLargeImage(object.getString("LargeImage"));
+    		products.setIsActive(object.getBoolean("IsActive"));
+    		products.setIsPrivate(object.getBoolean("IsPrivate"));
     		
     		productResponse[i] = products;
     	}

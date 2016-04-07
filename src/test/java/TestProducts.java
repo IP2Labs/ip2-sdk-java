@@ -33,16 +33,16 @@ public class TestProducts
     @Test
     public void runTest()
     {
-    	 final String subscriptionId = "092316011101C489965F8449899C7D171CC8CAF4E6";
-         final String accountId = "256758649804";
-         final String username = "username";
-         final String password = "password";
+    	 final String subscriptionId = "092315082879B7A85FF2CD436B91713472AE58B380";
+         final String accountId = "256776120056";
+         final String username = "intelipaymposug";
+         final String password = "TZ[8IjcQ5";
          
-         IP2Gateway gateway = new IP2Gateway(Environment.PRODUCTION, subscriptionId, accountId, username, password);
+         IP2Gateway gateway = new IP2Gateway(Environment.SANDBOX, subscriptionId, accountId, username, password);
          
          try 
          {
-			gateway.getProductItems("");
+			gateway.getProducts();
 		 }
          catch (IP2GatewayException e) {
 			// TODO Auto-generated catch block
