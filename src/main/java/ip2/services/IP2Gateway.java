@@ -58,4 +58,10 @@ public class IP2Gateway extends ProviderImpl implements ip2.contracts.IP2Gateway
 		// TODO Auto-generated method stub
 		return super.getProducts();
 	}
+	
+	@Override
+	public ServiceProducts[] getServiceProducts() throws IP2GatewayException
+	{
+		return super.getServiceProducts();
+	}
 }

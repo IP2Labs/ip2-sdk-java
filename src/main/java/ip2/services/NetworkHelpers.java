@@ -112,7 +112,7 @@ public class NetworkHelpers {
             String entity,
             int read_timeout,
             int connect_timeout) throws MalformedURLException, IOException, IP2GatewayException {
-
+    	
         URL m_url = new URL(url_);
 
 //        System.setProperty("jsse.enableSNIExtension", "false");
@@ -133,19 +133,21 @@ public class NetworkHelpers {
 //                }
 
             }
+            
+            if(http_method.equals("POST"))
+            {
+            	 connection.setDoOutput(true);
 
-            connection.setDoOutput(true);
-
-            if (entity != null) {
-                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                
-            try (OutputStream os = connection.getOutputStream()) {
-                os.write(entity.getBytes("UTF-8"));
-                os.flush();
+                 if (entity != null) {
+                     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                     
+                 try (OutputStream os = connection.getOutputStream()) {
+                     os.write(entity.getBytes("UTF-8"));
+                     os.flush();
+                 }
+                     
+                 }	
             }
-                
-            }
-       
 
         final InputStream is;
         final int responseCode = connection.getResponseCode();

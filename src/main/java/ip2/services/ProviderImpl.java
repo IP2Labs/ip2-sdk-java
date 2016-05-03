@@ -31,7 +31,7 @@ abstract class ProviderImpl {
     private static final String HTTP_GET = "GET";
     private static final String HTTP_POST = "POST";
 
-    private final String SANDBOX_IP = "http://ec2-54-148-117-189.us-west-2.compute.amazonaws.com";
+    private final String SANDBOX_IP = "http://ec2-54-148-117-189.us-west-2.compute.amazonaws.com:82";
     private final String PRODUCTION_IP = "https://gemini-api.azurewebsites.net";
 
     private final Environment environment;
@@ -137,7 +137,7 @@ abstract class ProviderImpl {
             details.createdOn = object.getString("CreatedOn");
             details.helpLink = object.getString("HelpLink");
             details.requestId = object.getString("RequestId");
-            details.responseCode = object.getInt("ResponseCode");
+            details.responseCode = object.getInt("HttpStatusCode");
             details.responseMessage = object.getString("ResponseMessage");
             details.transactionId = object.getString("TransactionId");
 
@@ -327,13 +327,16 @@ abstract class ProviderImpl {
                 url_ = SANDBOX_IP;
                 try {
 
-                    return NetworkHelpers.sandboxHttpRequest(
+                    return  NetworkHelpers.sandboxHttpRequest(
                             httpMethod,
                             url_.concat(requestUri),
                             generateHmacHeaders(httpMethod, hmacUri),
                             entity,
                             requestTimeout,
                             connectTimeout);
+                    
+                    
+                    
                 } catch (IP2GatewayException | IOException ex) {
                     throw new IP2GatewayException("Exception occured while making network requests", ex);
                 }
@@ -347,11 +350,9 @@ abstract class ProviderImpl {
     
     public ProductItems[] getProductItems(String productId) throws IP2GatewayException
     {
-    	String resourceUri = "/api/services?productId=".concat(productId);
+    	String resourceUri = "/api/Services/".concat(productId);
     	
     	String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
-    	
-    	
     	
     	JSONObject object = new JSONObject(getResponse);
     	
@@ -360,20 +361,32 @@ abstract class ProviderImpl {
     	for(int i=0; i<object.length(); i++)
     	{
     		ProductItems productItems  = new ProductItems();
-    		productItems.setProductId(object.getString("ProductId"));
-    		productItems.setCategory1(object.getString("Category1"));
-    		productItems.setCategory2(object.getString("Category2"));
-    		productItems.setCategory3(object.getString("Category3"));
-    		productItems.setCategory4(object.getString("Category4"));
+    		
+    		productItems.setServiceId(object.getString("ServiceId"));
+    		productItems.setUsername(object.getString("Username"));
+    		productItems.setWebsite((object.getString("Website")));
+    		productItems.setContactPhone(object.getString("ContactPhone"));
+    		productItems.setContactEmail(object.getString("ContactEmail"));
     		productItems.setName(object.getString("Name"));
+    		productItems.setServiceUri(object.getString("ServiceUri"));
+    		productItems.setSummary(object.getString("Summary"));
     		productItems.setDescription(object.getString("Description"));
-    		productItems.setMinimumPrice(object.getBigDecimal("MininumPrice"));
-    		productItems.setMaximumPrice(object.getBigDecimal("MaximumPrice"));
-    		productItems.setWholeSalePrice(object.getBigDecimal("WholeSalePrice"));
     		productItems.setCurrencyCode(object.getString("CurrencyCode"));
-    		productItems.setProductFee(object.getBigDecimal("ProductFee"));
-    		productItems.setDiscount(object.getBigDecimal("Discount"));
-    		productItems.setTax(object.getBigDecimal("Tax"));
+    		productItems.setCountryCode(object.getString("CountryCode"));
+    		productItems.setLargeImage(object.getString("LargeImage"));
+    		productItems.setThumbNail(object.getString("ThumbNail"));
+    		
+    		if(object.has("IsActive"))
+    		{
+    			productItems.setIsActive("Active");
+    		}
+    		
+    		if(object.has("IsPublic"))
+    		{
+    			productItems.setIsPublic("Public");
+    		}
+    		
+    		productItems.setCategory(object.getString("Category"));
     		
     		productItemsResponse[i] = productItems;
     	}
@@ -386,14 +399,11 @@ abstract class ProviderImpl {
     
     public Products[] getProducts() throws IP2GatewayException
     {
-    	String resourceUri = "/api/services";
+    	final String requestUri = "/api/services";
     	
-        String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
-        
-        System.out.println(getResponse);
+        final String getResponse = makeHttpRequest(requestUri, requestUri, "GET", null);
     	
-    	JSONArray array = new JSONArray(getResponse);
-    	
+    	JSONArray array = new JSONArray(getResponse);   	
     	Products[] productResponse = new Products[array.length()];
     	
     	for(int i=0; i<array.length(); i++)
@@ -414,12 +424,53 @@ abstract class ProviderImpl {
     		products.setThumbNail(object.getString("ThumbNail"));
     		products.setLargeImage(object.getString("LargeImage"));
     		products.setIsActive(object.getBoolean("IsActive"));
-    		products.setIsPrivate(object.getBoolean("IsPrivate"));
     		
+    		if(object.has("IsPrivate"))
+    		{
+    			products.setIsPrivate(object.getBoolean("IsPrivate"));
+    		}
+    			
     		productResponse[i] = products;
     	}
     	
     	return productResponse;
+    }
+    
+    
+    public ServiceProducts[] getServiceProducts() throws IP2GatewayException
+    {
+    	final String requestUri = "/api/ServiceProducts";
+    	
+    	final String getResponse = makeHttpRequest(requestUri, requestUri, HTTP_GET, null);
+    	System.out.println(getResponse);
+    	JSONArray array = new JSONArray(getResponse);
+    	ServiceProducts[] service = new ServiceProducts[array.length()];
+    	
+    	for(int i=0; i<array.length(); i++)
+    	{
+    		JSONObject object = array.getJSONObject(i);
+    		ServiceProducts products = new ServiceProducts();
+    		
+    		products.setProductId(object.getString("ProductId"));
+    		products.setName(object.getString("Name"));
+    		products.setDescription(object.getString("Description"));
+    		products.setMinimumPrice(object.getLong("MinimumPrice"));
+    		products.setCategory1(object.getString("Category1"));
+    		products.setCategory2(object.getString("Category2"));
+    		products.setCategory3(object.getString("Category3"));
+    		products.setCategory4(object.getString("Category4"));
+    		products.setMaximumPrice(object.getLong("MaximumPrice"));
+    		products.setWholeSalePrice(object.getLong("WholesalePrice"));
+    		products.setCurrencyCode(object.getString("CurrencyCode"));
+    		products.setProductFee(object.getLong("ProductFee"));
+    		products.setTax(object.getLong("Tax"));
+    		products.setLargeImage(object.getString("LargeImage"));
+    		products.setThumbNail(object.getString("ThumbNail"));
+    		
+    		service[i] = products;
+    	}
+    	
+    	return service;
     }
     
 
