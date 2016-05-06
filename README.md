@@ -8,7 +8,12 @@ The IP2 Java SDK helps you monitise your application by enabling your business t
 ##Requirements 
 To be added 
 ##Installation
-To be added - How to install from Maven 
+#Maven installation
+<dependency>
+  <groupId>ug.co.intelworld</groupId>
+  <artifactId>IP2Library</artifactId>
+  <version>0.1</version>
+</dependency>
 
 Functionality    
 1. [Collect and Make payments](https://github.com/IP2Labs/ip2-sdk-java/wiki/Payments)  
