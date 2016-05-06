@@ -9,10 +9,11 @@ The IP2 Java SDK helps you monitise your application by enabling your business t
 To be added 
 ##Installation
 ###Maven installation
-&lt;dependency&gt;
-  &lt;groupId&gt;ug.co.intelworld&lt;/groupId&gt;
-  &lt;artifactId&gt;IP2Library&lt;/artifactId&gt;
-  &lt;version&gt;0.1&lt;/version&gt;
+
+&lt;dependency&gt;<br />
+  &lt;groupId&gt;ug.co.intelworld&lt;/groupId&gt;<br />
+  &lt;artifactId&gt;IP2Library&lt;/artifactId&gt;<br />
+  &lt;version&gt;0.1&lt;/version&gt;<br />
 &lt;/dependency&gt;
 
 Functionality    
