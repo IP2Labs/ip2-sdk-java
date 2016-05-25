@@ -56,19 +56,25 @@ public class NetworkHelpers {
      * @throws ip2.exceptions.IP2GatewayException when it fails to
      * bypass SSL verification for tests
      */
-    protected static String productionHttpRequest(
+    protected static TransportImpl productionHttpRequest(
             String http_method,
             String url_,
             Map<String, String> headers,
             String entity,
+            boolean setTimeout,
             int read_timeout,
             int connect_timeout) throws MalformedURLException, IOException, IP2GatewayException {
 
         URL m_url = new URL(url_);
 
         HttpsURLConnection connection = (HttpsURLConnection) m_url.openConnection();
-        connection.setReadTimeout(read_timeout);
-        connection.setConnectTimeout(connect_timeout);
+        
+        if(setTimeout)
+        {
+           connection.setReadTimeout(read_timeout);
+           connection.setConnectTimeout(connect_timeout);
+        }
+       
         connection.setRequestMethod(http_method);
 
         if (headers != null && !headers.isEmpty()) {
@@ -94,25 +100,47 @@ public class NetworkHelpers {
         final InputStream is;
         final int responseCode = connection.getResponseCode();
         //connection.disconnect();
+        TransportImpl tpImpl = new TransportImpl();
         if (responseCode != 200 || responseCode != 201) {
             is = connection.getErrorStream();
-        } else {
+        } 
+        
+        else if(responseCode == 508)
+        {
+        	tpImpl.setLineStatus(responseCode);
+            tpImpl.setMessage("Server timeout");
+            return tpImpl;
+        }
+        
+        else if(responseCode == 408)
+        {
+        	tpImpl.setLineStatus(responseCode);
+            tpImpl.setMessage("Connection timeout");
+            return tpImpl;
+        }
+        
+        else 
+        {
             is = connection.getInputStream();
         }
         final String resp = getResponseMessage(is);
         connection.disconnect();
-        return resp;
+        
+        tpImpl.setLineStatus(responseCode);
+        tpImpl.setMessage(resp);
+        return tpImpl;
 
     }
 
-    protected static String sandboxHttpRequest(
+    protected static TransportImpl sandboxHttpRequest(
             String http_method,
             String url_,
             Map<String, String> headers,
             String entity,
+            boolean setTimeout,
             int read_timeout,
             int connect_timeout) throws MalformedURLException, IOException, IP2GatewayException {
-    	
+    	System.out.println(url_);
         URL m_url = new URL(url_);
 
 //        System.setProperty("jsse.enableSNIExtension", "false");
@@ -120,8 +148,12 @@ public class NetworkHelpers {
         //   return postToTestBed(environment, url_, headers, entity, read_timeout, connect_timeout);
 
         HttpURLConnection connection = (HttpURLConnection) m_url.openConnection();
-        connection.setReadTimeout(read_timeout);
-        connection.setConnectTimeout(connect_timeout);
+        if(setTimeout)
+        {
+           connection.setReadTimeout(read_timeout);
+           connection.setConnectTimeout(connect_timeout);
+        }
+       
         connection.setRequestMethod(http_method);
 
             if (headers != null && !headers.isEmpty()) {
@@ -151,16 +183,36 @@ public class NetworkHelpers {
 
         final InputStream is;
         final int responseCode = connection.getResponseCode();
+        TransportImpl tpImpl = new TransportImpl();
         //connection.disconnect();
         if (responseCode == 200 || responseCode == 201) {
             is = connection.getInputStream();
             
-        } else {
-            is = connection.getErrorStream();
+        }
+        else if(responseCode == 508)
+        {
+        	tpImpl.setLineStatus(508);
+            tpImpl.setMessage("Server timeout");
+            return tpImpl;
+        }
+        
+        else if(responseCode == 408)
+        {
+        	tpImpl.setLineStatus(408);
+            tpImpl.setMessage("Connection timeout");
+            return tpImpl;
+        }
+        
+        else 
+        {
+            is = connection.getInputStream();
         }
         final String resp = getResponseMessage(is);
         connection.disconnect();
-        return resp;
+        
+        tpImpl.setLineStatus(responseCode);
+        tpImpl.setMessage(resp);
+        return tpImpl;
 
     }
 
@@ -192,6 +244,7 @@ public class NetworkHelpers {
                 builder.append(line);
             }
         }
+       
         return builder.toString();
 
     }

@@ -17,8 +17,18 @@ import ip2.exceptions.IP2GatewayException;
  */
 public class IP2Gateway extends ProviderImpl implements ip2.contracts.IP2Gateway {
 
+	private int connectionTimeout;
+	private int serverTimeout;
+	
     public IP2Gateway(Environment environment, String subscriptionId, String accountId, String username, String password) {
         super(environment, subscriptionId, accountId, username, password);
+    }
+    
+    
+    @Override
+    public void setTimeout(boolean setTimeout, int serverTimeout, int connectionTimeout)
+    {
+    	super.setTimeout(setTimeout, serverTimeout, connectionTimeout);
     }
 
     @Override
@@ -39,6 +49,12 @@ public class IP2Gateway extends ProviderImpl implements ip2.contracts.IP2Gateway
     @Override
     public AccountDetails getAccountDetails() throws IP2GatewayException {
         return super.getAccountDetails();
+    }
+    
+    @Override
+    public AccountBalance getAccountBal() throws IP2GatewayException
+    {
+    	return super.getAccountBal();
     }
 
     @Override

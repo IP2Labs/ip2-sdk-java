@@ -31,7 +31,7 @@ abstract class ProviderImpl {
     private static final String HTTP_GET = "GET";
     private static final String HTTP_POST = "POST";
 
-    private final String SANDBOX_IP = "http://ec2-54-148-117-189.us-west-2.compute.amazonaws.com:82";
+    private final String SANDBOX_IP = "http://ip2-sandbox.intelworld.international:84";
     private final String PRODUCTION_IP = "https://gemini-api.azurewebsites.net";
 
     private final Environment environment;
@@ -42,6 +42,7 @@ abstract class ProviderImpl {
 
     private static int connectTimeout;
     private static int requestTimeout;
+    private static boolean setTimeout = false;
 
     public ProviderImpl(Environment environment, String subscriptionId, String accountId, String username, String password) {
         this.environment = environment;
@@ -50,6 +51,8 @@ abstract class ProviderImpl {
         this.username = username;
         this.password = password;
     }
+    
+    
 
     protected IP2Response makePayment(PaymentRequest request,int type) throws IP2GatewayException {
 
@@ -128,9 +131,10 @@ abstract class ProviderImpl {
     
     protected IP2Response makePCRequest(String entity,String requestUri) throws IP2GatewayException{
         
+    	 TransportImpl response = null;
          try {
-            final String response = makeHttpRequest(requestUri, requestUri, HTTP_POST, entity);
-            JSONObject object = new JSONObject(response);
+            response = makeHttpRequest(requestUri, requestUri, HTTP_POST, entity, setTimeout);
+            JSONObject object = new JSONObject(response.getMessage());
 
             IP2Response details = new IP2Response();
             details.correlationId = object.getString("CorrelationId");
@@ -144,7 +148,18 @@ abstract class ProviderImpl {
             return details;
 
         } catch (IP2GatewayException | JSONException | NullPointerException ex)  {
-            throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+        	  if(response.getLineStatus() == 508)
+    		  {
+    			  throw new IP2GatewayException("Server timeout", ex);
+    		  }
+    		  else if(response.getLineStatus() == 408)
+    		  {
+    			  throw new IP2GatewayException("Connection timeout", ex);
+    		  }
+    		  else
+    		  {
+    			  throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+    		  }
         }
     }
 
@@ -217,8 +232,9 @@ abstract class ProviderImpl {
     protected Transactions[] getTransactions() throws IP2GatewayException {
 
          final String requestUri = "/api/transactions/".concat(accountId).concat("?subscriptionId=").concat(subscriptionId);
+         TransportImpl response = null;
         try {
-            final String response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null);
+            response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null, setTimeout);
             JSONArray array = new JSONArray(response);
             int length = array.length();
             
@@ -245,40 +261,98 @@ abstract class ProviderImpl {
             return tr_list;
 
         } catch (IP2GatewayException | JSONException | NullPointerException ex)  {
-            throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+        	  if(response.getLineStatus() == 508)
+    		  {
+    			  throw new IP2GatewayException("Server timeout", ex);
+    		  }
+    		  else if(response.getLineStatus() == 408)
+    		  {
+    			  throw new IP2GatewayException("Connection timeout", ex);
+    		  }
+    		  else
+    		  {
+    			  throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+    		  }
         }
     }
 
     protected AccountDetails getAccountDetails() throws IP2GatewayException {
 
-        final String requestUri = "/api/accounts/".concat(accountId).concat("?subscriptionId=").concat(subscriptionId);
+        final String requestUri = "/api/v2/accounts/".concat(subscriptionId).concat("/").concat(accountId);
+        TransportImpl response = null;
         try {
-            final String response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null);
-            JSONObject object = new JSONObject(response);
+            response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null, setTimeout);
+            JSONObject object = new JSONObject(response.getMessage());
 
             AccountDetails details = new AccountDetails();
-            details.accountId = object.getString("AccountId");
-            details.accountStatus = object.getString("AccountStatus");
-            details.accountType = object.getString("AccountType");
-            details.balance = object.getBigDecimal("Balance");
-            details.countryCode = object.getString("CountryCode");
-            details.createdOn =  object.getString("CreatedOn");
-            details.currencyCode = object.getString("CurrencyCode");
-            details.totalAmount = object.getBigDecimal("TotalAmount");
+            details.setAccountId(object.getString("AccountId"));
+            details.setSubscriptionId(object.getString("SubscriptionId"));
+            details.setAccountType(object.getString("AccountType"));
+            details.setCurrencyCode(object.getString("CurrencyCode"));
+            details.setCountryCode(object.getString("CountryCode"));
+            details.setAccountStatus(object.getString("AccountStatus"));
 
             return details;
 
         } catch (IP2GatewayException | JSONException | NullPointerException ex) {
-            throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+        	if(response != null)
+        	{
+        		if(response.getLineStatus() == 508)
+      		  {
+      			  throw new IP2GatewayException("Server timeout", ex);
+      		  }
+      		  else if(response.getLineStatus() == 408)
+      		  {
+      			  throw new IP2GatewayException("Connection timeout", ex);
+      		  }
+        	}  
+    		else
+    		{
+    		   throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+    		}
         }
+		return null;
+    }
+    
+    
+    public AccountBalance getAccountBal() throws IP2GatewayException
+    {
+    	  final String requestUri = "/api/v2/accounts/balances/".concat(subscriptionId).concat("/").concat(accountId);
+    	  TransportImpl response = null;
+    	  try
+    	  {
+    		  response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null, setTimeout);
+    		  System.out.println(response);
+    		  JSONObject object = new JSONObject(response.getMessage());
+    		  
+    		  AccountBalance balance = new AccountBalance();
+    		  balance.setBalance(object.getLong("Balance"));
+    		  
+    		  return balance;
+    	  }
+    	  catch (IP2GatewayException | JSONException | NullPointerException ex) {
+    		  if(response.getLineStatus() == 508)
+    		  {
+    			  throw new IP2GatewayException("Server timeout", ex);
+    		  }
+    		  else if(response.getLineStatus() == 408)
+    		  {
+    			  throw new IP2GatewayException("Connection timeout", ex);
+    		  }
+    		  else
+    		  {
+    			  throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+    		  }
+             
+          }
+    	  
+    	
     }
 
-    public static void setConnectTimeout(int connectTimeout) {
-        ProviderImpl.connectTimeout = connectTimeout;
-    }
-
-    public static void setRequestTimeout(int requestTimeout) {
+    public void setTimeout(boolean setTimeout, int requestTimeout, int connectionTimeout) {
         ProviderImpl.requestTimeout = requestTimeout;
+        ProviderImpl.connectTimeout = connectionTimeout;
+        ProviderImpl.setTimeout = setTimeout;
     }
 
     protected String encodeUrlValue(String value) throws IP2GatewayException {
@@ -305,7 +379,7 @@ abstract class ProviderImpl {
 
     }
 
-    protected String makeHttpRequest(String requestUri, String hmacUri, String httpMethod, String entity) throws IP2GatewayException {
+    protected TransportImpl makeHttpRequest(String requestUri, String hmacUri, String httpMethod, String entity, boolean setTimeout) throws IP2GatewayException {
 
         String url_;
         switch (environment) {
@@ -317,7 +391,7 @@ abstract class ProviderImpl {
                             httpMethod,
                             url_.concat(requestUri),
                             generateHmacHeaders(httpMethod, hmacUri),
-                            entity,
+                            entity, setTimeout,
                             requestTimeout,
                             connectTimeout);
                 } catch (IP2GatewayException | IOException ex) {
@@ -331,7 +405,7 @@ abstract class ProviderImpl {
                             httpMethod,
                             url_.concat(requestUri),
                             generateHmacHeaders(httpMethod, hmacUri),
-                            entity,
+                            entity, setTimeout,
                             requestTimeout,
                             connectTimeout);
                     
@@ -352,48 +426,65 @@ abstract class ProviderImpl {
     {
     	String resourceUri = "/api/Services/".concat(productId);
     	
-    	String getResponse = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null);
-    	
-    	JSONObject object = new JSONObject(getResponse);
-    	
-    	ProductItems[] productItemsResponse = new ProductItems[object.length()];
-    	
-    	for(int i=0; i<object.length(); i++)
+    	TransportImpl response = makeHttpRequest(resourceUri, resourceUri, HTTP_GET, null, setTimeout);
+    	try
     	{
-    		ProductItems productItems  = new ProductItems();
-    		
-    		productItems.setServiceId(object.getString("ServiceId"));
-    		productItems.setUsername(object.getString("Username"));
-    		productItems.setWebsite((object.getString("Website")));
-    		productItems.setContactPhone(object.getString("ContactPhone"));
-    		productItems.setContactEmail(object.getString("ContactEmail"));
-    		productItems.setName(object.getString("Name"));
-    		productItems.setServiceUri(object.getString("ServiceUri"));
-    		productItems.setSummary(object.getString("Summary"));
-    		productItems.setDescription(object.getString("Description"));
-    		productItems.setCurrencyCode(object.getString("CurrencyCode"));
-    		productItems.setCountryCode(object.getString("CountryCode"));
-    		productItems.setLargeImage(object.getString("LargeImage"));
-    		productItems.setThumbNail(object.getString("ThumbNail"));
-    		
-    		if(object.has("IsActive"))
-    		{
-    			productItems.setIsActive("Active");
-    		}
-    		
-    		if(object.has("IsPublic"))
-    		{
-    			productItems.setIsPublic("Public");
-    		}
-    		
-    		productItems.setCategory(object.getString("Category"));
-    		
-    		productItemsResponse[i] = productItems;
+    		JSONObject object = new JSONObject(response.getMessage());
+        	
+        	ProductItems[] productItemsResponse = new ProductItems[object.length()];
+        	
+        	for(int i=0; i<object.length(); i++)
+        	{
+        		ProductItems productItems  = new ProductItems();
+        		
+        		productItems.setServiceId(object.getString("ServiceId"));
+        		productItems.setUsername(object.getString("Username"));
+        		productItems.setWebsite((object.getString("Website")));
+        		productItems.setContactPhone(object.getString("ContactPhone"));
+        		productItems.setContactEmail(object.getString("ContactEmail"));
+        		productItems.setName(object.getString("Name"));
+        		productItems.setServiceUri(object.getString("ServiceUri"));
+        		productItems.setSummary(object.getString("Summary"));
+        		productItems.setDescription(object.getString("Description"));
+        		productItems.setCurrencyCode(object.getString("CurrencyCode"));
+        		productItems.setCountryCode(object.getString("CountryCode"));
+        		productItems.setLargeImage(object.getString("LargeImage"));
+        		productItems.setThumbNail(object.getString("ThumbNail"));
+        		
+        		if(object.has("IsActive"))
+        		{
+        			productItems.setIsActive("Active");
+        		}
+        		
+        		if(object.has("IsPublic"))
+        		{
+        			productItems.setIsPublic("Public");
+        		}
+        		
+        		productItems.setCategory(object.getString("Category"));
+        		
+        		productItemsResponse[i] = productItems;
+        	}
+        		
+        	return productItemsResponse;
     	}
+    	catch (JSONException | NullPointerException ex)
+    	{
+   		  if(response.getLineStatus() == 508)
+   		  {
+   			  throw new IP2GatewayException("Server timeout", ex);
+   		  }
+   		  else if(response.getLineStatus() == 408)
+   		  {
+   			  throw new IP2GatewayException("Connection timeout", ex);
+   		  }
+   		  else
+   		  {
+   			  throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+   		  }
+            
+        }
     	
-    	
-    	
-    	return productItemsResponse;
     }
     
     
@@ -401,39 +492,59 @@ abstract class ProviderImpl {
     {
     	final String requestUri = "/api/services";
     	
-        final String getResponse = makeHttpRequest(requestUri, requestUri, "GET", null);
-    	
-    	JSONArray array = new JSONArray(getResponse);   	
-    	Products[] productResponse = new Products[array.length()];
-    	
-    	for(int i=0; i<array.length(); i++)
+        final TransportImpl response = makeHttpRequest(requestUri, requestUri, "GET", null, setTimeout);
+    	try
     	{
-    		JSONObject object = array.getJSONObject(i);
-    		Products products = new Products();
-    		products.setProductId(object.getString("ServiceId"));
-    		products.setName(object.getString("Name"));
-    		products.setUsername(object.getString("Username"));
-    		products.setDescription(object.getString("Description"));
-    		products.setWebsite(object.getString("Website"));
-    		products.setContactPhone(object.getString("ContactPhone"));
+    		JSONArray array = new JSONArray(response.getMessage());   	
+        	Products[] productResponse = new Products[array.length()];
+        	
+        	for(int i=0; i<array.length(); i++)
+        	{
+        		JSONObject object = array.getJSONObject(i);
+        		Products products = new Products();
+        		products.setProductId(object.getString("ServiceId"));
+        		products.setName(object.getString("Name"));
+        		products.setUsername(object.getString("Username"));
+        		products.setDescription(object.getString("Description"));
+        		products.setWebsite(object.getString("Website"));
+        		products.setContactPhone(object.getString("ContactPhone"));
+        		
+        		products.setContactEmail(object.getString("ContactEmail"));
+        		products.setServiceUri(object.getString("ServiceUri"));
+        		products.setCurrencyCode(object.getString("CurrencyCode"));
+        		products.setCountryCode(object.getString("CountryCode"));
+        		products.setThumbNail(object.getString("ThumbNail"));
+        		products.setLargeImage(object.getString("LargeImage"));
+        		products.setIsActive(object.getBoolean("IsActive"));
+        		
+        		if(object.has("IsPrivate"))
+        		{
+        			products.setIsPrivate(object.getBoolean("IsPrivate"));
+        		}
+        			
+        		productResponse[i] = products;
+        	}
+        	
+        	return productResponse;
     		
-    		products.setContactEmail(object.getString("ContactEmail"));
-    		products.setServiceUri(object.getString("ServiceUri"));
-    		products.setCurrencyCode(object.getString("CurrencyCode"));
-    		products.setCountryCode(object.getString("CountryCode"));
-    		products.setThumbNail(object.getString("ThumbNail"));
-    		products.setLargeImage(object.getString("LargeImage"));
-    		products.setIsActive(object.getBoolean("IsActive"));
-    		
-    		if(object.has("IsPrivate"))
-    		{
-    			products.setIsPrivate(object.getBoolean("IsPrivate"));
-    		}
-    			
-    		productResponse[i] = products;
     	}
+    	catch (JSONException | NullPointerException ex)
+    	{
+   		  if(response.getLineStatus() == 508)
+   		  {
+   			  throw new IP2GatewayException("Server timeout", ex);
+   		  }
+   		  else if(response.getLineStatus() == 408)
+   		  {
+   			  throw new IP2GatewayException("Connection timeout", ex);
+   		  }
+   		  else
+   		  {
+   			  throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+   		  }
+            
+        }
     	
-    	return productResponse;
     }
     
     
@@ -441,36 +552,55 @@ abstract class ProviderImpl {
     {
     	final String requestUri = "/api/ServiceProducts";
     	
-    	final String getResponse = makeHttpRequest(requestUri, requestUri, HTTP_GET, null);
-    	System.out.println(getResponse);
-    	JSONArray array = new JSONArray(getResponse);
-    	ServiceProducts[] service = new ServiceProducts[array.length()];
-    	
-    	for(int i=0; i<array.length(); i++)
+    	final TransportImpl response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null, setTimeout);
+    	try
     	{
-    		JSONObject object = array.getJSONObject(i);
-    		ServiceProducts products = new ServiceProducts();
-    		
-    		products.setProductId(object.getString("ProductId"));
-    		products.setName(object.getString("Name"));
-    		products.setDescription(object.getString("Description"));
-    		products.setMinimumPrice(object.getLong("MinimumPrice"));
-    		products.setCategory1(object.getString("Category1"));
-    		products.setCategory2(object.getString("Category2"));
-    		products.setCategory3(object.getString("Category3"));
-    		products.setCategory4(object.getString("Category4"));
-    		products.setMaximumPrice(object.getLong("MaximumPrice"));
-    		products.setWholeSalePrice(object.getLong("WholesalePrice"));
-    		products.setCurrencyCode(object.getString("CurrencyCode"));
-    		products.setProductFee(object.getLong("ProductFee"));
-    		products.setTax(object.getLong("Tax"));
-    		products.setLargeImage(object.getString("LargeImage"));
-    		products.setThumbNail(object.getString("ThumbNail"));
-    		
-    		service[i] = products;
+    		JSONArray array = new JSONArray(response.getMessage());
+        	ServiceProducts[] service = new ServiceProducts[array.length()];
+        	
+        	for(int i=0; i<array.length(); i++)
+        	{
+        		JSONObject object = array.getJSONObject(i);
+        		ServiceProducts products = new ServiceProducts();
+        		
+        		products.setProductId(object.getString("ProductId"));
+        		products.setName(object.getString("Name"));
+        		products.setDescription(object.getString("Description"));
+        		products.setMinimumPrice(object.getLong("MinimumPrice"));
+        		products.setCategory1(object.getString("Category1"));
+        		products.setCategory2(object.getString("Category2"));
+        		products.setCategory3(object.getString("Category3"));
+        		products.setCategory4(object.getString("Category4"));
+        		products.setMaximumPrice(object.getLong("MaximumPrice"));
+        		products.setWholeSalePrice(object.getLong("WholesalePrice"));
+        		products.setCurrencyCode(object.getString("CurrencyCode"));
+        		products.setProductFee(object.getLong("ProductFee"));
+        		products.setTax(object.getLong("Tax"));
+        		products.setLargeImage(object.getString("LargeImage"));
+        		products.setThumbNail(object.getString("ThumbNail"));
+        		
+        		service[i] = products;
+        	}
+        	
+        	return service;
     	}
+    	catch (JSONException | NullPointerException ex)
+    	{
+   		  if(response.getLineStatus() == 508)
+   		  {
+   			  throw new IP2GatewayException("Server timeout", ex);
+   		  }
+   		  else if(response.getLineStatus() == 408)
+   		  {
+   			  throw new IP2GatewayException("Connection timeout", ex);
+   		  }
+   		  else
+   		  {
+   			  throw new IP2GatewayException("Failed to process returned IP2 response", ex);
+   		  }
+            
+        }
     	
-    	return service;
     }
     
 
