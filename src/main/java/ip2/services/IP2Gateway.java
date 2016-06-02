@@ -26,18 +26,18 @@ public class IP2Gateway extends ProviderImpl implements ip2.contracts.IP2Gateway
     
     
     @Override
-    public void setTimeout(boolean setTimeout, int serverTimeout, int connectionTimeout)
+    public void setTimeout(int serverTimeout, int connectionTimeout)
     {
-    	super.setTimeout(setTimeout, serverTimeout, connectionTimeout);
+    	super.setTimeout(serverTimeout, connectionTimeout);
     }
 
     @Override
-    public IP2Response requestPayment(PaymentRequest request) throws IP2GatewayException {
+    public IP2Response requestDebit(TransactionRequest request) throws IP2GatewayException {
         return super.makePayment(request, 0);
     }
 
     @Override
-    public IP2Response deposit(PaymentRequest request) throws IP2GatewayException {
+    public IP2Response requestCredit(TransactionRequest request) throws IP2GatewayException {
         return super.makePayment(request, 1);
     }
 

@@ -10,42 +10,39 @@ package ip2.services;
  * @author herbert
  */
 public class IP2Response {
-    
-    protected String correlationId;
-    protected String requestId;
-    protected String transactionId;
-    protected int responseCode;
-    protected String responseMessage;
-    protected String helpLink;
-    protected String createdOn;
-
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public int getResponseCode() {
-        return responseCode;
-    }
-
-    public String getResponseMessage() {
-        return responseMessage;
-    }
-
-    public String getHelpLink() {
-        return helpLink;
-    }
-
-    public String getCreatedOn() {
-        return createdOn;
-    }
+   
+	private String referenceId;
+	private String transactionId;
+	private String correlationId;
+	private String data;
+	
+	
+	public String getReferenceId() {
+		return referenceId;
+	}
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
+	public String getTransactionId() {
+		return transactionId;
+	}
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+	public String getCorrelationId() {
+		return correlationId;
+	}
+	public void setCorrelationId(String correlationId) {
+		this.correlationId = correlationId;
+	}
+	public String getData() {
+		return data;
+	}
+	public void setData(String data) {
+		this.data = data;
+	}
+	
+	
     
     
 }

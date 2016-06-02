@@ -8,7 +8,7 @@ package ip2.contracts;
 
 import ip2.exceptions.IP2GatewayException;
 import ip2.services.AccountDetails;
-import ip2.services.PaymentRequest;
+import ip2.services.TransactionRequest;
 import ip2.services.CommerceRequest;
 import ip2.services.IP2Response;
 import ip2.services.ProductItems;
@@ -23,11 +23,11 @@ import ip2.services.Transactions;
  */
 public interface IP2Gateway {
     
-    public IP2Response requestPayment(PaymentRequest request) throws IP2GatewayException;
-    public IP2Response deposit(PaymentRequest request) throws IP2GatewayException;
     public IP2Response purchase(CommerceRequest request) throws IP2GatewayException;
     public AccountDetails getAccountDetails() throws IP2GatewayException;
     public Transactions[] getTransactions() throws IP2GatewayException;
     public ProductItems[] getProductItems(String productId) throws IP2GatewayException;
     public Products[] getProducts() throws IP2GatewayException;
+    public IP2Response requestDebit(TransactionRequest request) throws IP2GatewayException;
+    public IP2Response requestCredit(TransactionRequest request) throws IP2GatewayException;
 }
