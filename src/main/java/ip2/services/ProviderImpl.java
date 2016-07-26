@@ -15,6 +15,7 @@ import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -35,7 +36,7 @@ abstract class ProviderImpl {
 	private static final String HTTP_GET = "GET";
 	private static final String HTTP_POST = "POST";
 
-	private final String SANDBOX_IP = "http://ip2-sandbox.intelworld.international:84";
+	private final String SANDBOX_IP = "http://ec2-54-148-117-189.us-west-2.compute.amazonaws.com:84";
 	private final String PRODUCTION_IP = "https://gemini-api.azurewebsites.net";
 
 	private final Environment environment;
@@ -60,68 +61,69 @@ abstract class ProviderImpl {
 			throws IP2GatewayException {
 
 		JSONObject object = new JSONObject();
-
-		object.put("RefId", request.getRefId());
-		object.put("BatchId", request.getBatchId());
-		object.put("ProductId", request.getProductId());
-		object.put("Amount", request.getAmount());
-		object.put("CurrencyCode", request.getCurrencyCode());
-		object.put("CountryCode", request.getCountryCode());
-		object.put("Memo", request.getMemo());
-		object.put("ChannelId", request.getChannelId());
-		object.put("ProviderId", request.getProviderId());
-		object.put("UserId", request.getUserId());
-
-		JSONObject thirdPartyReference = new JSONObject();
-		Map<String, Object> thirdp = request.getThirdPartyReference();
-
-		for (Map.Entry<String, Object> entry : thirdp.entrySet()) {
-			thirdPartyReference.put(entry.getKey(), entry.getValue());
-		}
-
-		object.put("ThirdPartyReference", thirdPartyReference);
-
-		JSONObject paymentReference = new JSONObject();
-		Map<String, Object> pr = request.getPaymentReference();
-
-		for (Map.Entry<String, Object> entry : pr.entrySet()) {
-			paymentReference.put(entry.getKey(), entry.getValue());
-
-		}
-
-		object.put("PaymentReference", paymentReference);
-
-		JSONObject metaData = new JSONObject();
-
-		Map<String, Object> md = request.getMetaData();
-
-		if (md != null && md.size() > 0) {
-			for (Map.Entry<String, Object> entry : md.entrySet()) {
-				metaData.put(entry.getKey(), entry.getValue());
-
+		try
+		{
+			object.put("BatchId", request.getBatchId());
+			object.put("RequestId", request.getRequestId());
+			object.put("PaymentMethodId", request.getPaymentMethodId());
+			object.put("ProductId", request.getProductId());
+			object.put("Amount", request.getAmount());
+			object.put("CurrencyCode", request.getCurrencyCode());
+			object.put("CountryCode", request.getCountryCode());
+			object.put("Memo", request.getMemo());
+			object.put("ChannelId", request.getChannelId());
+			
+			HashMap<String, String> requestReference = request.getRequestReference();
+			
+			JSONObject requestReferenceObject = new JSONObject();
+			
+			for(Map.Entry<String, String> entry : requestReference.entrySet())
+			{
+				requestReferenceObject.put(entry.getKey(), entry.getValue());
 			}
-
-			object.put("MetaData", metaData);
-		} else {
-			object.put("MetaData", "{}");
-		}
-
-		JSONObject productReference = new JSONObject();
-
-		Map<String, Object> pf = request.getProductReference();
-
-		
-	    for (Map.Entry<String, Object> entry : pf.entrySet())
-	    {
-			productReference.put(entry.getKey(), entry.getValue());
-
-	    }
-
-		object.put("ProductReference", productReference);
+			
+			object.put("RequestReference", requestReference);
+			
+			JSONObject paymentMethodReferenceObj = new JSONObject();
+			HashMap<String, String> paymentMethodReference = request.getPaymentMethodReference();
+			
+			for(Map.Entry<String, String> entry : paymentMethodReference.entrySet())
+			{
+				paymentMethodReferenceObj.put(entry.getKey(), entry.getValue());
+			}
+			object.put("PaymentMethodReference", paymentMethodReferenceObj);
+			
+			HashMap<String, String> metaData = request.getMetaData();
+			JSONObject metaDataObj = new JSONObject();
+			
+			for(Map.Entry<String, String> entry: metaData.entrySet())
+			{
+				metaDataObj.put(entry.getKey(), entry.getValue());
+			}
+			object.put("MetaData", metaDataObj);
+			
+			JSONObject productReferenceObj = new JSONObject();
+			HashMap<String, String> productReference = request.getProductReference();
+			
+			for(Map.Entry<String, String> entry: productReference.entrySet())
+			{
+				productReferenceObj.put(entry.getKey(), entry.getValue());
+			}
+			object.put("ProductReference", productReferenceObj);
+			
+			JSONObject channelReferenceObj = new JSONObject();
+			HashMap<String, String> channelReference = request.getChannelReference();
+			
+			for(Map.Entry<String, String> entry : channelReference.entrySet())
+			{
+				channelReferenceObj.put(entry.getKey(), entry.getValue());
+			}
+			
+			object.put("ChannelReference", channelReferenceObj);
 		
 		final String requestUri;
 		if (type == 0) {
-			requestUri = "/api/v2/transactions/debits/".concat(subscriptionId).concat("/").concat(accountId);
+			requestUri = "/api/v2/transactions/Debits/".concat(subscriptionId).concat("/").concat(accountId);
 					
 		} else {
 			requestUri = "/api/v2/transactions/credits/".concat(subscriptionId).concat("/").concat(accountId);
@@ -129,6 +131,11 @@ abstract class ProviderImpl {
 		}
 		
 		return makePCRequest(object.toString(), requestUri);
+		}
+		catch(JSONException ex)
+		{
+			return null;
+		}
 
 	}
 
@@ -138,8 +145,8 @@ abstract class ProviderImpl {
 		TransportImpl response = null;
 		try {
 
-			ProviderImpl.connectTimeout = 0;
-			ProviderImpl.requestTimeout = 0;
+			//ProviderImpl.connectTimeout = 0;
+			//ProviderImpl.requestTimeout = 0;
 
 			response = makeHttpRequest(requestUri, requestUri, HTTP_POST,
 					entity);
@@ -151,6 +158,7 @@ abstract class ProviderImpl {
 			details.setReferenceId(object.getString("ReferenceId"));
 			details.setTransactionId(object.getString("TransactionId"));
 			details.setData(object.getString("Data"));
+			details.setHttpStatus(response.getLineStatus());
 
 			return details;
 
@@ -244,6 +252,7 @@ abstract class ProviderImpl {
 		TransportImpl response = null;
 		try {
 			response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null);
+		
 			JSONArray array = new JSONArray(response);
 			int length = array.length();
 

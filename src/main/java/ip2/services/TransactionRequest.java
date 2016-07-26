@@ -15,120 +15,116 @@ import java.util.Map;
  */
 public class TransactionRequest {
 
-    private String batchId;
-    private String refId;
-    private String productId;
-    private String amount;
-    private String currencyCode;
-    private String countryCode;
-    private String memo;
-    private String channelId;
-    private String providerId;
-    private String userId;
-    private HashMap<String, Object> thirdPartyReference;
-    private HashMap<String, Object> paymentReference;
-    private HashMap<String, Object> metaData;
-    private HashMap<String, Object> productReference;
-    
-    
-	public TransactionRequest(String batchId, String refId, String productId,
-			String amount, String currencyCode, String countryCode,
-			String memo, String channelId, String providerId, String userId,
-			HashMap<String, Object> thirdPartyReference,
-			HashMap<String, Object> paymentReference,
-			HashMap<String, Object> metaData,
-			HashMap<String, Object> productReference) {
-		
-		this.batchId = batchId;
-		this.refId = refId;
-		this.productId = productId;
-		this.amount = amount;
-		this.currencyCode = currencyCode;
-		this.countryCode = countryCode;
-		this.memo = memo;
-		this.channelId = channelId;
-		this.providerId = providerId;
-		this.userId = userId;
-		this.thirdPartyReference = thirdPartyReference;
-		this.paymentReference = paymentReference;
-		this.metaData = metaData;
-		this.productReference = productReference;
-	}
-
-
+	public String batchId;
+	public String requestId;
+	public String paymentMethodId;
+	public String productId;
+	public String amount;
+	public String currencyCode;
+	public String countryCode;
+	public String memo;
+	public String channelId;
+	public String customerId;
+	
+	public HashMap<String, String> requestReference;
+	public HashMap<String, String> paymentMethodReference;
+	public HashMap<String, String> metaData;
+	public HashMap<String, String> productReference;
+	public HashMap<String, String> channelReference;
+	
+	
+	
 	public String getBatchId() {
 		return batchId;
 	}
-
-
-	public String getRefId() {
-		return refId;
+	public void setBatchId(String batchId) {
+		this.batchId = batchId;
 	}
-
-
+	public String getRequestId() {
+		return requestId;
+	}
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+	public String getPaymentMethodId() {
+		return paymentMethodId;
+	}
+	public void setPaymentMethodId(String paymentMethodId) {
+		this.paymentMethodId = paymentMethodId;
+	}
 	public String getProductId() {
 		return productId;
 	}
-
-
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 	public String getAmount() {
 		return amount;
 	}
-
-
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
 	public String getCurrencyCode() {
 		return currencyCode;
 	}
-
-
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
 	public String getCountryCode() {
 		return countryCode;
 	}
-
-
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
 	public String getMemo() {
 		return memo;
 	}
-
-
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 	public String getChannelId() {
 		return channelId;
 	}
-
-
-	public String getProviderId() {
-		return providerId;
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
 	}
-
-
-	public String getUserId() {
-		return userId;
+	public String getCustomerId() {
+		return customerId;
 	}
-
-
-	public HashMap<String, Object> getThirdPartyReference() {
-		return thirdPartyReference;
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
-
-
-	public HashMap<String, Object> getPaymentReference() {
-		return paymentReference;
+	public HashMap<String, String> getRequestReference() {
+		return requestReference;
 	}
-
-
-	public HashMap<String, Object> getMetaData() {
+	public void setRequestReference(HashMap<String, String> requestReference) {
+		this.requestReference = requestReference;
+	}
+	public HashMap<String, String> getPaymentMethodReference() {
+		return paymentMethodReference;
+	}
+	public void setPaymentMethodReference(
+			HashMap<String, String> paymentMethodReference) {
+		this.paymentMethodReference = paymentMethodReference;
+	}
+	public HashMap<String, String> getMetaData() {
 		return metaData;
 	}
-
-
-	public HashMap<String, Object> getProductReference() {
+	public void setMetaData(HashMap<String, String> metaData) {
+		this.metaData = metaData;
+	}
+	public HashMap<String, String> getProductReference() {
 		return productReference;
 	}
+	public void setProductReference(HashMap<String, String> productReference) {
+		this.productReference = productReference;
+	}
+	public HashMap<String, String> getChannelReference() {
+		return channelReference;
+	}
+	public void setChannelReference(HashMap<String, String> channelReference) {
+		this.channelReference = channelReference;
+	}
 	
-	
-	
-    
-    
-    
     
 }

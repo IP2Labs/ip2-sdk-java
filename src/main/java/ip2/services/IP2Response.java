@@ -15,7 +15,17 @@ public class IP2Response {
 	private String transactionId;
 	private String correlationId;
 	private String data;
+	private int httpStatus;
 	
+	public void setHttpStatus(int httpStatus)
+	{
+		this.httpStatus = httpStatus;
+	}
+	
+	public int getHttpStatus()
+	{
+		return this.httpStatus;
+	}
 	
 	public String getReferenceId() {
 		return referenceId;

@@ -168,7 +168,7 @@ public class NetworkHelpers {
 
 			final InputStream is;
 			final int responseCode = connection.getResponseCode();
-
+			
 			// connection.disconnect();
 			if (responseCode == 200 || responseCode == 201) {
 				is = connection.getInputStream();
@@ -185,6 +185,7 @@ public class NetworkHelpers {
 			tpImpl.setMessage(resp);
 			return tpImpl;
 		} 
+		
 		catch (SocketTimeoutException ex)
 		{
 
@@ -193,8 +194,10 @@ public class NetworkHelpers {
 			connection.disconnect();
 			return tpImpl;
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-			return null;
+			tpImpl.setLineStatus(444);
+			tpImpl.setMessage("Unknown error has again.");
+			connection.disconnect();
+			return tpImpl;
 		}
 
 	}
@@ -232,7 +235,6 @@ public class NetworkHelpers {
 				builder.append(line);
 			}
 		}
-
 		return builder.toString();
 
 	}

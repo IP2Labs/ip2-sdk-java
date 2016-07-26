@@ -1,4 +1,4 @@
-import java.net.SocketTimeoutException;
+
 import java.util.HashMap;
 
 import ip2.constants.Environment;
@@ -20,7 +20,7 @@ public class TestIP2 {
 	@Test
 	public void runTestIP2()
 	{
-		IP2Gateway gateway = new IP2Gateway(Environment.SANDBOX, "06f497ccfb6d4bb59fa82947597b5fea-V2", "256776120055", "BLACK", "BLACK");
+		/*IP2Gateway gateway = new IP2Gateway(Environment.SANDBOX, "06f497ccfb6d4bb59fa82947597b5fea-V2", "256776120055", "BLACK", "BLACK");
 		
 		HashMap<String, Object> tp = new HashMap<String, Object>();
 		tp.put("DeviceId", "847383748374");
@@ -34,24 +34,20 @@ public class TestIP2 {
 		HashMap<String, Object> md= new HashMap<String, Object>();
 		md.put("Location", "000");
 		
-		
-		
-		TransactionRequest request = new TransactionRequest(IP2GatewayUtils.generateUniqueID(), IP2GatewayUtils.generateUniqueID(),
-				"MTNUGAIRTIME", "500", "UGX", "256", "Airtime test", "Android_Payapp", "IP2", "", tp, paymentf, md, productf);
+		  TransactionRequest request = new TransactionRequest(IP2GatewayUtils.generateUniqueID(), IP2GatewayUtils.generateUniqueID(),
+	                "MTNUGAIRTIME", "1000", "UGX", "256",
+	                "Airtime for 256784703425", "Android_Payapp", "IP2", "", tp, paymentf, md, productf);
 		
 		IP2Response response;
 		try {
+			//gateway.setTimeout(20000, 20);
 			response = gateway.requestDebit(request);
-			System.out.println(response.getData());
+			System.out.println(response.getHttpStatus());
 		} catch (IP2GatewayException e) {
-			// TODO Auto-generated catch block
+			//TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getMessage());
-		}
-		
-		
-		
-		
+		}*/
 	    
 	}
 	
