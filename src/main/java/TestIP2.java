@@ -20,33 +20,61 @@ public class TestIP2 {
 	@Test
 	public void runTestIP2()
 	{
-		/*IP2Gateway gateway = new IP2Gateway(Environment.SANDBOX, "06f497ccfb6d4bb59fa82947597b5fea-V2", "256776120055", "BLACK", "BLACK");
+		IP2Gateway gateway = new IP2Gateway(Environment.SANDBOX, "F6E4CA2A3F214BD886D2D896FE81B331V2", "256776120055", "BLACK", "BLACK");
 		
-		HashMap<String, Object> tp = new HashMap<String, Object>();
-		tp.put("DeviceId", "847383748374");
+		TransactionRequest request = new TransactionRequest();
+		request.setBatchId("BATCH-1");
+		request.setRequestId("B6E6E123AB4SB6");
+		request.setPaymentMethodId("IP2WALLETUG");
+		request.setProductId("AIRTELAIRTIMEUG");
+		request.setAmount("5000");
+		request.setCurrencyCode("UGX");
+		request.setCountryCode("256");
+		request.setMemo("My airtime");
+		request.setChannelId("USSD");
+		request.setCustomerId("100008938298");
 		
-		HashMap<String, Object> paymentf= new HashMap<String, Object>();
-		paymentf.put("MSISDN", "256776120055");
+		HashMap<String, String> requestReference = new HashMap<String, String>();
+		requestReference.put("PhoneNumber", "256784703425");
+		requestReference.put("ReceiptId", "1234");
 		
-		HashMap<String, Object> productf= new HashMap<String, Object>();
-		productf.put("MSISDN", "256784703425");
+		HashMap<String, String> paymentMethodReference = new HashMap<String, String>();
+		paymentMethodReference.put("SrcMsisdn", "256784703425");
+		paymentMethodReference.put("DstMsisdn", "256784703425");
 		
-		HashMap<String, Object> md= new HashMap<String, Object>();
-		md.put("Location", "000");
+		HashMap<String, String> metaData = new HashMap<String, String>();
+		metaData.put("CreatedOn", "2016-06-12 14:30:23");
 		
-		  TransactionRequest request = new TransactionRequest(IP2GatewayUtils.generateUniqueID(), IP2GatewayUtils.generateUniqueID(),
-	                "MTNUGAIRTIME", "1000", "UGX", "256",
-	                "Airtime for 256784703425", "Android_Payapp", "IP2", "", tp, paymentf, md, productf);
+		HashMap<String, String> productReference = new HashMap<String, String>();
+		productReference.put("Msisdn","25677MYPHONE");
+		productReference.put("VoucherId", "NYPHO");
+		
+		HashMap<String, String> channelReference = new HashMap<String, String>();
+		channelReference.put("AppId", "28047502834092305");
+		
+		request.setRequestReference(requestReference);
+		request.setPaymentMethodReference(paymentMethodReference);
+		request.setMetaData(metaData);
+		request.setProductReference(productReference);
+		request.setChannelReference(channelReference);
 		
 		IP2Response response;
 		try {
 			//gateway.setTimeout(20000, 20);
 			response = gateway.requestDebit(request);
-			System.out.println(response.getHttpStatus());
+			System.out.println(response.getData());
 		} catch (IP2GatewayException e) {
 			//TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getMessage());
+		}
+		
+		/*try {
+			AccountDetails details = gateway.getAccountDetails();
+			System.out.println(details.getAccountStatus());
+		} catch (IP2GatewayException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}*/
 	    
 	}

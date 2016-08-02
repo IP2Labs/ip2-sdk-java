@@ -11,27 +11,31 @@ package ip2.services;
  */
 public class IP2Response {
    
-	private String referenceId;
-	private String transactionId;
-	private String correlationId;
-	private String data;
-	private int httpStatus;
+	public String message;
+	public String requestId;
+	public String batchId;
+	public String transactionId;
+	public String createdOn;
+	public String data;
+	public int statusCode;
 	
-	public void setHttpStatus(int httpStatus)
-	{
-		this.httpStatus = httpStatus;
+	public String getMessage() {
+		return message;
 	}
-	
-	public int getHttpStatus()
-	{
-		return this.httpStatus;
+	public void setMessage(String message) {
+		this.message = message;
 	}
-	
-	public String getReferenceId() {
-		return referenceId;
+	public String getRequestId() {
+		return requestId;
 	}
-	public void setReferenceId(String referenceId) {
-		this.referenceId = referenceId;
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+	public String getBatchId() {
+		return batchId;
+	}
+	public void setBatchId(String batchId) {
+		this.batchId = batchId;
 	}
 	public String getTransactionId() {
 		return transactionId;
@@ -39,11 +43,11 @@ public class IP2Response {
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
 	}
-	public String getCorrelationId() {
-		return correlationId;
+	public String getCreatedOn() {
+		return createdOn;
 	}
-	public void setCorrelationId(String correlationId) {
-		this.correlationId = correlationId;
+	public void setCreatedOn(String createdOn) {
+		this.createdOn = createdOn;
 	}
 	public String getData() {
 		return data;
@@ -52,7 +56,18 @@ public class IP2Response {
 		this.data = data;
 	}
 	
+	public void setStatusCode(int lineStatus)
+	{
+		this.statusCode = lineStatus;
+	}
 	
-    
+	public int getStatusCode()
+	{
+		return this.statusCode;
+	}
+	
+	
+	
+	
     
 }

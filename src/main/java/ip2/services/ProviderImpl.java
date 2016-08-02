@@ -72,6 +72,7 @@ abstract class ProviderImpl {
 			object.put("CountryCode", request.getCountryCode());
 			object.put("Memo", request.getMemo());
 			object.put("ChannelId", request.getChannelId());
+			object.put("CustomerId", request.getCustomerId());
 			
 			HashMap<String, String> requestReference = request.getRequestReference();
 			
@@ -82,7 +83,7 @@ abstract class ProviderImpl {
 				requestReferenceObject.put(entry.getKey(), entry.getValue());
 			}
 			
-			object.put("RequestReference", requestReference);
+			object.put("RequestReference", requestReferenceObject);
 			
 			JSONObject paymentMethodReferenceObj = new JSONObject();
 			HashMap<String, String> paymentMethodReference = request.getPaymentMethodReference();
@@ -154,11 +155,18 @@ abstract class ProviderImpl {
 			JSONObject object = new JSONObject(response.getMessage());
 
 			IP2Response details = new IP2Response();
-			details.setCorrelationId(object.getString("CorrelationId"));
-			details.setReferenceId(object.getString("ReferenceId"));
-			details.setTransactionId(object.getString("TransactionId"));
-			details.setData(object.getString("Data"));
-			details.setHttpStatus(response.getLineStatus());
+			
+			details.setMessage(object.getString("Message"));
+			details.setStatusCode(response.getLineStatus());
+			JSONObject obj = object.getJSONObject("Data");
+			
+			details.setRequestId(obj.getString("RequestId"));
+			details.setBatchId(obj.getString("BatchId"));
+			details.setTransactionId(obj.getString("TransactionId"));
+			details.setCreatedOn(obj.getString("CreatedOn"));
+			
+			JSONObject obj2 = obj.getJSONObject("Data");
+			details.setData(obj2.getString("Message"));
 
 			return details;
 
@@ -168,12 +176,16 @@ abstract class ProviderImpl {
 				if (response.getLineStatus() == 444) {
 					throw new IP2GatewayException(response.getMessage(), ex);
 				}
+				else
+				{
+					throw new IP2GatewayException(response.getMessage(), ex);
+				}
 			} else {
 				throw new IP2GatewayException(
 						"Failed to process returned IP2 response", ex);
 			}
 		}
-		return null;
+		
 	}
 
 	protected IP2Response makeCommerce(CommerceRequest request)
@@ -298,15 +310,30 @@ abstract class ProviderImpl {
 		TransportImpl response = null;
 		try {
 			response = makeHttpRequest(requestUri, requestUri, HTTP_GET, null);
-			JSONObject object = new JSONObject(response.getMessage());
+			System.out.println(response.getMessage());
+			JSONObject rawResponse = new JSONObject(response.getMessage());
+			JSONObject object = rawResponse.getJSONObject("Data");
 
 			AccountDetails details = new AccountDetails();
-			details.setAccountId(object.getString("AccountId"));
-			details.setSubscriptionId(object.getString("SubscriptionId"));
-			details.setAccountType(object.getString("AccountType"));
-			details.setCurrencyCode(object.getString("CurrencyCode"));
-			details.setCountryCode(object.getString("CountryCode"));
-			details.setAccountStatus(object.getString("AccountStatus"));
+			details.setCreatedOn(object.get("CreatedOn"));
+			details.setModifiedOn(object.get("ModifiedOn"));
+			details.setAccountId(object.get("AccountId"));
+			details.setSubscriptionId(object.get("SubscriptionId"));
+			details.setAccountType(object.get("AccountType"));
+			details.setCurrencyCode(object.get("CurrencyCode"));
+			details.setAccountStatus(object.get("AccountStatus"));
+			details.setName(object.get("Name"));
+			details.setShortDescription(object.get("ShortDescription"));
+			details.setLongDescription(object.get("LongDescription"));
+			details.setAlertLevel(object.get("AlertLevel"));
+			details.setAlertChannel(object.get("AlertChannel"));
+			details.setAlertEmailAddress(object.get("AlertEmailAddress"));
+			details.setAlertPhoneNumber(object.get("AlertPhoneNumber"));
+			details.setMinimumTransactionAmount(object.getLong("MinimumTransactionAmount"));
+			details.setMaximumTransactionAmount(object.getLong("MaximumTransactionAmount"));
+			details.setTransactionPlan(object.get("TransactionPlan"));
+			details.setTransactionPlanTotalAmount(object.getLong("TransactionPlanTotalAmount"));
+			details.setBalance(object.getLong("Balance"));
 
 			return details;
 
@@ -315,12 +342,16 @@ abstract class ProviderImpl {
 				if (response.getLineStatus() == 444) {
 					throw new IP2GatewayException(response.getMessage(), ex);
 				}
+				else
+				{
+					throw new IP2GatewayException(response.getMessage(), ex);
+				}
 			} else {
 				throw new IP2GatewayException(
 						"Failed to process returned response", ex);
 			}
 		}
-		return null;
+		
 	}
 
 	public AccountBalance getAccountBal() throws IP2GatewayException {

@@ -195,7 +195,7 @@ public class NetworkHelpers {
 			return tpImpl;
 		} catch (Exception ex) {
 			tpImpl.setLineStatus(444);
-			tpImpl.setMessage("Unknown error has again.");
+			tpImpl.setMessage("Unknown error has occurred.");
 			connection.disconnect();
 			return tpImpl;
 		}
