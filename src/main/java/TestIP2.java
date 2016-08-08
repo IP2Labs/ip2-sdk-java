@@ -24,7 +24,7 @@ public class TestIP2 {
 		
 		TransactionRequest request = new TransactionRequest();
 		request.setBatchId("BATCH-1");
-		request.setRequestId("B6E6E123AB4SB6");
+		request.setRequestId("E665445677543B");
 		request.setPaymentMethodId("IP2WALLETUG");
 		request.setProductId("AIRTELAIRTIMEUG");
 		request.setAmount("5000");
@@ -60,7 +60,7 @@ public class TestIP2 {
 		
 		IP2Response response;
 		try {
-			//gateway.setTimeout(20000, 20);
+			gateway.setTimeout(2, 50000);
 			response = gateway.requestDebit(request);
 			System.out.println(response.getData());
 		} catch (IP2GatewayException e) {

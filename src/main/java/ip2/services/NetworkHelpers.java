@@ -186,11 +186,12 @@ public class NetworkHelpers {
 			return tpImpl;
 		} 
 		
+		
 		catch (SocketTimeoutException ex)
 		{
 
 			tpImpl.setLineStatus(444);
-			tpImpl.setMessage(ex.getMessage());
+			tpImpl.setMessage(ex.getMessage()+" please try again");
 			connection.disconnect();
 			return tpImpl;
 		} catch (Exception ex) {

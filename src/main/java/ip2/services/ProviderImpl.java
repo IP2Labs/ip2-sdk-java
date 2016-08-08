@@ -146,13 +146,11 @@ abstract class ProviderImpl {
 		TransportImpl response = null;
 		try {
 
-			//ProviderImpl.connectTimeout = 0;
-			//ProviderImpl.requestTimeout = 0;
-
 			response = makeHttpRequest(requestUri, requestUri, HTTP_POST,
 					entity);
 			
 			JSONObject object = new JSONObject(response.getMessage());
+			System.out.println(response.getMessage());
 
 			IP2Response details = new IP2Response();
 			
@@ -164,9 +162,9 @@ abstract class ProviderImpl {
 			details.setBatchId(obj.getString("BatchId"));
 			details.setTransactionId(obj.getString("TransactionId"));
 			details.setCreatedOn(obj.getString("CreatedOn"));
+			details.setStatusCode(object.getInt("Code"));
 			
-			JSONObject obj2 = obj.getJSONObject("Data");
-			details.setData(obj2.getString("Message"));
+			details.setData(obj.getString("Message"));
 
 			return details;
 
@@ -174,11 +172,12 @@ abstract class ProviderImpl {
 
 			if (response != null) {
 				if (response.getLineStatus() == 444) {
-					throw new IP2GatewayException(response.getMessage(), ex);
+				
+					throw new IP2GatewayException(response.getMessage());
 				}
 				else
 				{
-					throw new IP2GatewayException(response.getMessage(), ex);
+					throw new IP2GatewayException(ex.getMessage(), ex);
 				}
 			} else {
 				throw new IP2GatewayException(
